@@ -16,5 +16,7 @@ namespace HotelListing.Data
         
         [Column(TypeName = "varchar(5)")]
         public string ShortName { get; set; }
+
+        public virtual IList<Hotel> Hotels { get; set; }
     }
 }
