@@ -11,13 +11,9 @@ namespace HotelListing.Data
     {
         public int Id { get; set; }
      
-        [Required]
-        [MaxLength(200)]
         [Column(TypeName ="varchar(200)")]
         public string Name { get; set; }
 
-        [Required]
-        [MaxLength(1000)]
         [Column(TypeName = "varchar(1000)")]
         public string Address { get; set; }
 
