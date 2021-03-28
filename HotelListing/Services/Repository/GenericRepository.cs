@@ -14,10 +14,10 @@ namespace HotelListing.Services.Repository
         private readonly DatabaseContext _context;
         private readonly DbSet<T> _db;
 
-        public GenericRepository(DatabaseContext context, DbSet<T> db)
+        public GenericRepository(DatabaseContext context)
         {
             _context = context;
-            _db = db;
+            _db = _context.Set<T>();
         }
 
         public async Task<List<T>> GetAll(Expression<Func<T, bool>> expression = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, List<string> includes = null)
