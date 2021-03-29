@@ -48,6 +48,26 @@ namespace HotelListing.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("GetHotelsPaged")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetHotelsPaged([FromQuery] RequestParams requestParams)
+        {
+            try
+            {
+                var countries = await _unitOfWork.Hotels.GetAll(requestParams);
+                var results = _mapper.Map<IList<HotelDTO>>(countries);
+                return Ok(countries);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, $"Something went wrong in the {nameof(GetHotels)}");
+                return StatusCode(500, "Internal server error. Try again later.");
+            }
+        }
+
         [HttpGet("{id:int}", Name = "GetHotel")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
