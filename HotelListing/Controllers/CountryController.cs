@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using HotelListing.DTOs;
 using HotelListing.Services.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace HotelListing.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class CountryController : ControllerBase
@@ -28,6 +30,7 @@ namespace HotelListing.Controllers
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetCountries()
         {
@@ -46,6 +49,7 @@ namespace HotelListing.Controllers
 
         [HttpGet("{id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetCountry(int id)
         {
