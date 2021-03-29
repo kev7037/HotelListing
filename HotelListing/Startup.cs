@@ -57,6 +57,7 @@ namespace HotelListing
                 op.SerializerSettings.ReferenceLoopHandling
                     = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
+            services.ConfigureVersioning();
             services.AddControllers();
         }
 
