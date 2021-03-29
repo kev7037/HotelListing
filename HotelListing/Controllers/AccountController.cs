@@ -65,5 +65,35 @@ namespace HotelListing.Controllers
             }
         }
 
+        //[HttpPost]
+        //[Route("Login")]
+        //[ProducesResponseType(StatusCodes.Status202Accepted)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //public async Task<IActionResult> Login([FromBody] LoginUserDTO userDTO)
+        //{
+        //    _logger.LogInformation($"Login attempt for {userDTO.Email}");
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
+
+        //    try
+        //    {
+        //        var result = await _signInManager.PasswordSignInAsync(userDTO.Email, userDTO.Password, false, false);
+
+        //        if (!result.Succeeded)
+        //        {
+        //            return Unauthorized(userDTO);
+        //        }
+
+        //        return Accepted();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        _logger.LogError(e, $"Something went wrong in the {nameof(Login)}");
+        //        return Problem($"Something went wrong in the {nameof(Login)}", statusCode: 500);
+        //    }
+        //}
     }
 }
