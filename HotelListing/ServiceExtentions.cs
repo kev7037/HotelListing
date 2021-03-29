@@ -47,7 +47,13 @@ namespace HotelListing
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = jwtSettings.GetSection("Issuer").Value,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
+                    //The audience of a token is the intended recipient of the token.
+
+                    //The audience value is a string-- typically,
+                    //the base address of the resource being accessed,
+                    //such as https://contoso.com.
+                    ValidateAudience = false
                 };
             });
         }

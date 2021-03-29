@@ -13,6 +13,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using System;
+using System.Collections.Generic;
 
 namespace HotelListing
 {
@@ -45,8 +47,9 @@ namespace HotelListing
             services.ConfigureJWT(Configuration);
 
             //Setting CORS policy
-            services.AddCors(x => {
-                x.AddPolicy("CorsPolicy", builder => 
+            services.AddCors(x =>
+            {
+                x.AddPolicy("CorsPolicy", builder =>
                                 builder
                                 .AllowAnyOrigin()
                                 .AllowAnyMethod()
@@ -58,9 +61,57 @@ namespace HotelListing
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IAuthManager, AuthManager>();
 
-            services.AddSwaggerGen(c =>
+            //services.AddSwaggerGen(c =>
+            //{
+            //    c.SwaggerDoc("v1", new OpenApiInfo { Title = "HotelListing", Version = "v1" });
+            //});
+
+            services.AddSwaggerGen(s =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "HotelListing", Version = "v1" });
+                s.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "HotelListing",
+                    Description = "Hotel Listing API",
+                    Contact = new OpenApiContact
+                    {
+                        Name = "name",
+                        Email = "email@gmail.com",
+                        //Url = new Uri("https://google.com")
+                    }
+                    //,
+                    //License = new OpenApiLicense
+                    //{
+                    //    Name = "MIT",
+                    //    Url = new Uri("https://google.com")
+                    //}
+
+                });
+
+                s.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "JWT Authorization header using the Bearer scheme (Example: 'Bearer 12345abcdef')",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+
+                s.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
+
             });
 
             services.AddControllers().AddNewtonsoftJson(op =>
@@ -78,7 +129,13 @@ namespace HotelListing
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "HotelListing v1"));
+                app.UseSwaggerUI(c =>
+                {
+                    string swaggerJosnBasePath = string.IsNullOrWhiteSpace(c.RoutePrefix) ? "." : "..";
+                    c.SwaggerEndpoint($"{swaggerJosnBasePath}/swagger/v1/swagger.json", "Hotel Listing API v1");
+                });
+
+
             }
 
             app.ConfigureExceptionHandler();

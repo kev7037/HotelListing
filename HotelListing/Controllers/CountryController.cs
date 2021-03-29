@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 namespace HotelListing.Controllers
 {
     [ApiVersion("1.0", Deprecated = false)] //set true for prev versions
-    //[Authorize]
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class CountryController : ControllerBase
