@@ -2,6 +2,7 @@
 using HotelListing.Data;
 using HotelListing.DTOs;
 using HotelListing.Services.IRepository;
+using Marvin.Cache.Headers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +15,7 @@ using System.Threading.Tasks;
 namespace HotelListing.Controllers
 {
     [ApiVersion("1.0", Deprecated = false)] //set true for prev versions
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class CountryController : ControllerBase
@@ -31,6 +32,9 @@ namespace HotelListing.Controllers
         }
 
         [HttpGet]
+        //[ResponseCache(CacheProfileName= "5Minutes")]
+        [HttpCacheExpiration(CacheLocation = CacheLocation.Public, MaxAge = 120)]
+        [HttpCacheValidation(MustRevalidate = false)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
