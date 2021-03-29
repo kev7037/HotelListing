@@ -20,9 +20,9 @@ namespace HotelListing.Controllers
         private readonly IMapper _mapper;
         private readonly IAuthManager _authManager;
 
-        public AccountController(UserManager<ApiUser> userManager, 
-            ILogger<AccountController> logger, 
-            IMapper mapper, 
+        public AccountController(UserManager<ApiUser> userManager,
+            ILogger<AccountController> logger,
+            IMapper mapper,
             IAuthManager authManager)
         {
             _userManager = userManager;
@@ -44,29 +44,21 @@ namespace HotelListing.Controllers
                 return BadRequest(ModelState);
             }
 
-            try
-            {
-                var user = _mapper.Map<ApiUser>(userDTO);
-                user.UserName = userDTO.Email;
-                var result = await _userManager.CreateAsync(user, userDTO.Password);
+            var user = _mapper.Map<ApiUser>(userDTO);
+            user.UserName = userDTO.Email;
+            var result = await _userManager.CreateAsync(user, userDTO.Password);
 
-                if (!result.Succeeded)
+            if (!result.Succeeded)
+            {
+                foreach (var item in result.Errors)
                 {
-                    foreach (var item in result.Errors)
-                    {
-                        ModelState.AddModelError(item.Code, item.Description);
-                    }
-                    return BadRequest(ModelState);
+                    ModelState.AddModelError(item.Code, item.Description);
                 }
+                return BadRequest(ModelState);
+            }
 
-                await _userManager.AddToRolesAsync(user, userDTO.Roles);
-                return Accepted();
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, $"Something went wrong in the {nameof(Register)}");
-                return Problem($"Something went wrong in the {nameof(Register)}", statusCode: 500);
-            }
+            await _userManager.AddToRolesAsync(user, userDTO.Roles);
+            return Accepted();
         }
 
         [HttpPost]
@@ -82,21 +74,12 @@ namespace HotelListing.Controllers
                 return BadRequest(ModelState);
             }
 
-            try
+            if (!await _authManager.ValidateUser(userDTO))
             {
-
-                if (!await _authManager.ValidateUser(userDTO))
-                {
-                    return Unauthorized(userDTO);
-                }
-
-                return Accepted(new { Token = await _authManager.CreateToken() });
+                return Unauthorized(userDTO);
             }
-            catch (Exception e)
-            {
-                _logger.LogError(e, $"Something went wrong in the {nameof(Login)}");
-                return Problem($"Something went wrong in the {nameof(Login)}", statusCode: 500);
-            }
+
+            return Accepted(new { Token = await _authManager.CreateToken() });
         }
     }
 }
