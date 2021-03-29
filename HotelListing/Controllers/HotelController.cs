@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HotelListing.Data;
 using HotelListing.DTOs;
 using HotelListing.Services.IRepository;
 using Microsoft.AspNetCore.Authorization;
@@ -47,7 +48,7 @@ namespace HotelListing.Controllers
             }
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet("{id:int}", Name = "GetHotel")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -62,6 +63,33 @@ namespace HotelListing.Controllers
             catch (Exception e)
             {
                 _logger.LogError(e, $"Something went wrong in the {nameof(GetHotel)}");
+                return StatusCode(500, "Internal server error. Try again later.");
+            }
+        }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CreateHotel([FromBody] CreateHotelDTO hotelDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                _logger.LogError($"Invalid POST attempt in {nameof(CreateHotel)}");
+                return BadRequest(ModelState);
+            }
+            try
+            {
+                var hotel = _mapper.Map<Hotel>(hotelDTO);
+                await _unitOfWork.Hotels.Insert(hotel);
+                await _unitOfWork.Save();
+
+                return CreatedAtRoute("GetHotel", new { id = hotel.Id }, hotel);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, $"Something went wrong in the {nameof(CreateHotel)}");
                 return StatusCode(500, "Internal server error. Try again later.");
             }
         }
